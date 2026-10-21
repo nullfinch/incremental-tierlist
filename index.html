@@ -7,20 +7,20 @@
   <style>:root{color-scheme:dark;--bg:#0e1018;--panel:#171a25;--border:#303648;--ink:#f2f4ff;--muted:#9da6bd}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,Segoe UI,Arial,sans-serif}
 header{position:sticky;top:0;z-index:10;padding:15px 22px;background:#0f1119f5;border-bottom:1px solid var(--border)}
-.head,.actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.head{justify-content:space-between}h1{font-size:20px;margin:0}.subtitle{color:var(--muted);font-size:12px;margin:4px 0 0}
+.head,.actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.head{justify-content:space-between}h1{font-size:20px;margin:0}
 button,input,textarea{font:inherit}button{background:#272c3e;border:1px solid #46506b;border-radius:8px;color:#eeeaff;padding:9px 12px;cursor:pointer}button:hover{background:#39415b}button:focus-visible,input:focus-visible,textarea:focus-visible,.tile:focus-visible{outline:2px solid #baadff;outline-offset:3px}button:disabled{opacity:.5;cursor:wait}button.red{border-color:#a7575c;color:#ffd9df}
-input,textarea{background:#161927;color:white;border:1px solid #49516b;border-radius:8px;padding:10px}#search{width:200px}main{padding:18px max(12px,3vw) 50px;max-width:2100px;margin:auto}.topline{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.hint,.stats,footer,.source{font-size:12px;color:var(--muted)}.hint{margin:0}.stats{white-space:nowrap}#notice{font-size:12px;color:#9be2c1;min-height:20px;margin:8px 0 15px}
+input,textarea{background:#161927;color:white;border:1px solid #49516b;border-radius:8px;padding:10px}main{padding:18px max(12px,3vw) 50px;max-width:2100px;margin:auto}.source{font-size:12px;color:var(--muted)}#notice{font-size:12px;color:#ffd9df;margin:0 0 15px}
 .tier{display:flex;background:#171a24;border:1px solid var(--border);margin:0 0 11px;min-height:106px;border-radius:12px;overflow:hidden}.tier.drag-over{border-color:#c5b5ff;background:#25273d}.tier-label{flex:0 0 81px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:29px;font-weight:900;color:#14151b}.tier-label small{font-size:12px}.tier-cards{flex:1;display:flex;flex-wrap:wrap;align-content:flex-start;align-items:flex-start;gap:7px;padding:11px;min-width:0;min-height:106px}.tier.empty .tier-cards::after{content:'Drop games here';color:#70788e;margin:auto;font-size:13px}.tier.drag-over .tier-cards::after{display:none}
 .tile{position:relative;width:116px;height:82px;border:1px solid #4b536a;border-radius:7px;overflow:hidden;background:#232737;cursor:grab;user-select:none;flex:0 0 auto;touch-action:pan-y}.tile:hover{border-color:#ccc7ff}.tile img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}.tile .name{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,#000e 30%);padding:18px 4px 4px;color:white;line-height:1.15;font-size:10px;text-align:center;max-height:42px;overflow:hidden;text-shadow:0 1px 3px black}.tile .review{position:absolute;right:4px;top:3px;padding:0 3px;background:#152c23e8;border-radius:3px;color:#c6ffdf;font-size:10px}.tile.dragging{opacity:.2}.drop-slot{width:116px;height:82px;flex:0 0 auto;border:2px dashed #c1b3ff;border-radius:7px;background:#a48aff1a;display:flex;align-items:center;justify-content:center;pointer-events:none}.drop-slot::after{content:'Drop here';font-size:11px;color:#d9d0ff}.drag-active{cursor:grabbing}.scroll-cue{position:fixed;left:0;right:0;z-index:80;pointer-events:none;height:48px;display:flex;justify-content:center;align-items:center;background:#312751e8;color:#ede6ff;font-size:12px}.scroll-cue.top{top:0}.scroll-cue.bottom{bottom:0}
 #tooltip{position:fixed;z-index:50;pointer-events:none;background:#f8f8ff;color:#181923;border:1px solid #a8a8d4;border-radius:9px;padding:10px 12px;width:300px;max-width:85vw;box-shadow:0 15px 45px #0008;display:none;font-size:12px}.tttitle{font-size:15px;font-weight:800}.ttmuted{color:#60637c;margin-top:4px}.ttnotes{border-top:1px solid #dedeea;margin-top:7px;padding-top:6px}
-#overlay:not([hidden]){position:fixed;inset:0;z-index:60;background:#050512bb;display:flex;align-items:center;justify-content:center;padding:16px}.modal{background:#222638;border:1px solid #5b6381;border-radius:16px;width:min(500px,100%);padding:22px;max-height:90vh;overflow:auto}.modal h2{margin:0 30px 10px 0;font-size:21px}.modal-close{float:right;background:transparent;border:0;font-size:24px;padding:0 4px}.tiers-select{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0}.tiers-select button{min-width:42px;font-weight:800}.tiers-select .selected{border-color:white;box-shadow:0 0 0 2px #ad9afe}.check{display:flex;align-items:center;gap:8px;margin:12px 0}.field{display:block;margin-top:14px}.modal textarea{width:100%;margin-top:6px}.modal-bottom{display:flex;justify-content:flex-end;margin-top:18px}.source{line-height:1.7}.source a,footer a{color:#c6bdff}.source a{margin-right:12px}footer{padding:18px 0;text-align:center}
+#overlay:not([hidden]){position:fixed;inset:0;z-index:60;background:#050512bb;display:flex;align-items:center;justify-content:center;padding:16px}.modal{background:#222638;border:1px solid #5b6381;border-radius:16px;width:min(500px,100%);padding:22px;max-height:90vh;overflow:auto}.modal h2{margin:0 30px 10px 0;font-size:21px}.modal-close{float:right;background:transparent;border:0;font-size:24px;padding:0 4px}.tiers-select{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0}.tiers-select button{min-width:42px;font-weight:800}.tiers-select .selected{border-color:white;box-shadow:0 0 0 2px #ad9afe}.check{display:flex;align-items:center;gap:8px;margin:12px 0}.field{display:block;margin-top:14px}.modal textarea{width:100%;margin-top:6px}.modal-bottom{display:flex;justify-content:flex-end;margin-top:18px}.source{line-height:1.7}.source a{color:#c6bdff}.source a{margin-right:12px}
 .tile-metrics{position:absolute;top:3px;left:3px;right:3px;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:2px;pointer-events:none}.metric{padding:0 3px;border-radius:3px;background:#17202bf2;color:#edf2ff;font-size:9px;line-height:11px;white-space:nowrap;font-variant-numeric:tabular-nums}.metric.steam{background:#152c23ed;color:#c6ffdf}.metric.galaxy,.metric.hours{background:#302044ed;color:#e4d4ff}.metric.incrementaldb{background:#183044ed;color:#cceaff}.metric.itch{background:#4a252eed;color:#ffdae1}.tile .name{padding:5px 4px 3px;max-height:31px}
 .metric.apple{background:#303744ed;color:#edf1ff}.metric.google{background:#163d34ed;color:#c9ffe6}.badge-toggle{display:flex;align-items:center;gap:5px;font-size:12px;color:#cbd0e4;white-space:nowrap;cursor:pointer}.badge-toggle input{margin:0;accent-color:#b7a4ff}.hide-score-badges .tile-metrics{display:none}
 .scroll-cue[hidden]{display:none}.drag-active .tile.dragging{display:block;position:absolute;left:-10000px;opacity:0;pointer-events:none}
 @media(max-width:800px){header{position:relative;padding:13px}.tier-label{flex-basis:52px;font-size:23px}.tier-cards{padding:7px;gap:5px;min-height:85px}.tile,.drop-slot{width:91px;height:69px}.tile .name{font-size:9px}.tier{min-height:85px}.actions{gap:6px}.actions button{padding:7px 8px;font-size:12px}#search{width:100%}}
 @media(max-width:800px){.metric{font-size:8px;line-height:9px;padding:0 2px}.tile-metrics{gap:1px}.tile .name{padding:3px 3px 2px;max-height:27px}}
 :root{--tile-width:116px;--tile-height:82px;--tile-gap:7px;--card-pad:11px;--header-height:130px;--unranked-width:calc(3 * var(--tile-width) + 2 * var(--tile-gap) + 2 * var(--card-pad) + 22px)}
-.ranking-actions{display:flex;justify-content:center;align-items:center;gap:6px;flex:0 0 auto}.actions{gap:8px}.actions button{white-space:nowrap;padding:8px 10px;font-size:13px}#search{width:clamp(120px,12vw,180px)}
+.ranking-actions{display:flex;justify-content:center;align-items:center;gap:6px;flex:0 0 auto}.actions{gap:8px}.actions button{white-space:nowrap;padding:8px 10px;font-size:13px}#search{width:clamp(138px,13.8vw,207px)}
 @media(max-width:800px){.actions{gap:6px}.actions button{padding:7px 8px;font-size:12px}#search{width:100%}}
 @media(max-width:480px){.ranking-actions{flex-wrap:wrap;justify-content:flex-start;flex:1 1 100%}}
 #board{display:grid;grid-template-columns:minmax(0,1fr) var(--unranked-width);align-items:start;gap:16px}.ranked-board{min-width:0}
@@ -39,7 +39,7 @@ input,textarea{background:#161927;color:white;border:1px solid #49516b;border-ra
 <body>
 <header>
   <div class="head">
-    <div><h1>Incremental Game Tier List</h1><p class="subtitle">Your rankings, saved in this browser</p></div>
+    <h1>Incremental Game Tier List</h1>
     <div class="actions">
       <input id="search" type="search" placeholder="Search games…" aria-label="Search games">
       <label class="badge-toggle"><input id="showScoreBadges" type="checkbox" checked> Show score badges</label>
@@ -54,10 +54,8 @@ input,textarea{background:#161927;color:white;border:1px solid #49516b;border-ra
   </div>
 </header>
 <main>
-  <div class="topline"><p class="hint">Drag a game into an empty slot. Hold near the top or bottom edge to scroll. Click a game to choose a tier or add notes.</p><span id="stats" class="stats"></span></div>
-  <p id="notice" role="status" aria-live="polite">Loading games…</p>
+  <p id="notice" role="status" aria-live="polite" hidden></p>
   <div id="board" aria-label="Game tier list"></div>
-  <footer>Saved on this device. Use Save to transfer your list or keep a copy. <a href="https://galaxy.click" target="_blank" rel="noopener">Galaxy</a> · <a href="https://www.incrementaldb.com" target="_blank" rel="noopener">IncrementalDB</a> · <a href="https://itch.io" target="_blank" rel="noopener">itch.io</a> · <a href="https://incrementalgames.org" target="_blank" rel="noopener">Catalog</a></footer>
 </main>
 <div id="tooltip" role="tooltip"></div>
 <div id="overlay" hidden>
@@ -82,7 +80,7 @@ const $ = id => document.getElementById(id);
 const byId = new Map(), tiles = new Map(), lanes = new Map();
 let games = [], placements = {}, groups = new Map(), search = '', selected = null;
 let drag = null, frame = 0, previousFrame = 0, suppressClickUntil = 0;
-let storageAvailable = true, pendingSave = false, searchFrame = 0, returnFocus = null;
+let pendingSave = false, searchFrame = 0, returnFocus = null;
 let showScoreBadges = true;
 let unrankedMinimized = false, ownerPreset = null;
 const slot = document.createElement('div');
@@ -99,7 +97,7 @@ function el(tag, className, text) {
   if (text != null) node.textContent = text;
   return node;
 }
-function notify(text) { $('notice').textContent = text; }
+function notify(text) { const notice=$('notice'); notice.textContent=text; notice.hidden=!text; }
 function ordered(tier) { return groups.get(tier) || []; }
 function regroup() {
   groups = new Map(TIERS.map(t => [t, []]));
@@ -125,10 +123,8 @@ function persist() {
   pendingSave = false;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({version:3, showScoreBadges, unrankedMinimized, placements:personalSnapshot()}));
-    storageAvailable = true;
-    notify('✓ Saved in this browser');
+    notify('');
   } catch (error) {
-    storageAvailable = false;
     notify('Browser storage is unavailable or full. Use Save to keep your changes.');
   }
 }
@@ -229,7 +225,6 @@ function setUnrankedMinimized(minimized,savePreference=true){
 }
 function draw() {
   regroup();
-  let visible = 0;
   for (const tier of TIERS) {
     const lane = lanes.get(tier), fragment = document.createDocumentFragment();
     const list = ordered(tier);
@@ -242,14 +237,13 @@ function draw() {
       if (!tile) { tile=makeTile(game); tiles.set(game.id,tile); }
       const source=placements[game.id].cover;
       if(tile.dataset.cover!==source){tile.dataset.cover=source;const image=tile.querySelector('img');image.hidden=false;image.src=source;}
-      fragment.append(tile); lane.nodes.push(tile); shown++; visible++;
+      fragment.append(tile); lane.nodes.push(tile); shown++;
     }
     const scrollTop=lane.cards.scrollTop;
     lane.cards.replaceChildren(fragment);
     if(tier==='?')lane.cards.scrollTop=scrollTop;
     lane.section.classList.toggle('empty', shown===0);
   }
-  $('stats').textContent = `${visible} / ${games.length} games`;
 }
 function moveGame(id,tier,beforeId) {
   if (!byId.has(id) || !TIERS.includes(tier)) return;
@@ -387,19 +381,16 @@ function download(name,content,type){const url=URL.createObjectURL(new Blob([con
 function exportJSON(){download('my_incremental_tierlist.json',JSON.stringify({version:3,created:new Date().toISOString(),placements:personalSnapshot()},null,2),'application/json');}
 function escapeCSV(value){const text=String(value??'');return /[",\r\n]/.test(text)?'"'+text.replace(/"/g,'""')+'"':text;}
 function exportCSV(){const rows=[['Game','Tier','Played','Steam positive %','Steam review count','Galaxy score / 5','Galaxy ratings','Galaxy total hours','IncrementalDB upvotes','itch.io score / 5','itch.io ratings','Apple score / 5 (US)','Apple ratings (US)','Google Play score / 5 (US)','Google Play ratings (US)','Notes']];for(const t of RANKED_TIERS)for(const g of ordered(t)){const p=placements[g.id];rows.push([g.name,t,p.played?'Yes':'No',p.reviews,p.review_count,p.galaxy_score,p.galaxy_votes,p.galaxy_hours,p.incrementaldb_upvotes,p.itch_score,p.itch_votes,p.apple_score,p.apple_votes,p.google_score,p.google_votes,p.note]);}download('my_incremental_tierlist.csv',rows.map(r=>r.map(escapeCSV).join(',')).join('\r\n'),'text/csv;charset=utf-8');}
-function resetList(){if(!confirm('Start a fresh list with every game unranked and clear your notes? A recovery copy will be downloaded first.'))return;exportJSON();games.forEach((g,i)=>Object.assign(placements[g.id],{tier:'?',order:i,played:false,note:''}));search='';$('search').value='';draw();save();}
+function resetList(){if(!confirm('Save your list first if you want to keep it. Reset will unrank every game and clear your notes and played markers. Continue?'))return;games.forEach((g,i)=>Object.assign(placements[g.id],{tier:'?',order:i,played:false,note:''}));search='';$('search').value='';draw();save();}
 function loadOwnerRankings(){
   if(!ownerPreset?.placements)return;
-  if(RANKED_TIERS.some(t=>ordered(t).length)){
-    if(!confirm("Replace your tiers with miserable_duck's rankings? A recovery JSON copy will be downloaded first."))return;
-    exportJSON();
-  }
+  if(!confirm("Save your list first if you want to keep it. Loading miserable_duck's rankings will replace your tiers and ordering. Continue?"))return;
   games.forEach((g,i)=>{const preset=ownerPreset.placements[g.id];Object.assign(placements[g.id],{
     tier:TIERS.includes(preset?.tier)?preset.tier:'?',order:Number.isFinite(preset?.order)?preset.order:i
   });});
   search='';$('search').value='';draw();save();
 }
-async function importBackup(file){try{if(file.size>5000000)throw Error('JSON file exceeds the 5 MB limit.');const data=JSON.parse(await file.text());if(!data.placements||typeof data.placements!=='object'||Array.isArray(data.placements))throw Error('No placements found.');let count=0;for(const g of games){const value=data.placements[g.id];if(value&&TIERS.includes(value.tier)){Object.assign(placements[g.id],cleanPersonal(value,placements[g.id]));count++;}}if(!count)throw Error('No matching games found.');draw();save();notify(`Imported ${count} games. ${storageAvailable?'Saved in this browser.':'Use Save to keep a copy.'}`);}catch(error){alert('Could not import backup: '+error.message);}finally{$('importFile').value='';}}
+async function importBackup(file){try{if(file.size>5000000)throw Error('JSON file exceeds the 5 MB limit.');const data=JSON.parse(await file.text());if(!data.placements||typeof data.placements!=='object'||Array.isArray(data.placements))throw Error('No placements found.');let count=0;for(const g of games){const value=data.placements[g.id];if(value&&TIERS.includes(value.tier)){Object.assign(placements[g.id],cleanPersonal(value,placements[g.id]));count++;}}if(!count)throw Error('No matching games found.');draw();save();}catch(error){alert('Could not load JSON: '+error.message);}finally{$('importFile').value='';}}
 
 function loadImage(src){return new Promise(resolve=>{const image=new Image();if(new URL(src,location.href).origin!==location.origin)image.crossOrigin='anonymous';image.onload=()=>resolve(image);image.onerror=()=>resolve(null);image.src=src;});}
 async function exportPNG(){const button=$('png');button.disabled=true;button.textContent='Rendering…';try{
@@ -429,7 +420,7 @@ async function init(){try{
   $('showScoreBadges').checked=showScoreBadges;document.body.classList.toggle('hide-score-badges',!showScoreBadges);
   games.forEach((g,i)=>{byId.set(g.id,g);const seed=data.placements?.[g.id]||{};const fallback={tier:'?',order:i,played:false,note:''};placements[g.id]={...seed,...cleanPersonal(saved?.[g.id],fallback)};});
   buildBoard();draw();
-  persist();if(saved&&storageAvailable)notify('Your saved list is loaded.');
+  persist();
 }catch(error){notify(error.message+' Serve the site over HTTP rather than opening index.html directly.');}}
 $('search').addEventListener('input',e=>{search=e.target.value.trim().toLowerCase();if(!searchFrame)searchFrame=requestAnimationFrame(()=>{searchFrame=0;draw();});});
 $('csv').onclick=exportCSV;$('json').onclick=exportJSON;$('png').onclick=exportPNG;$('reset').onclick=resetList;
