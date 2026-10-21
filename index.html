@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en" data-source="./data.json">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Incremental Game Tier List</title>
+  <style>:root{color-scheme:dark;--bg:#0e1018;--panel:#171a25;--border:#303648;--ink:#f2f4ff;--muted:#9da6bd}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,Segoe UI,Arial,sans-serif}
+header{position:sticky;top:0;z-index:10;padding:15px 22px;background:#0f1119f5;border-bottom:1px solid var(--border)}
+.head,.actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.head{justify-content:space-between}h1{font-size:20px;margin:0}.subtitle{color:var(--muted);font-size:12px;margin:4px 0 0}
+button,input,textarea{font:inherit}button{background:#272c3e;border:1px solid #46506b;border-radius:8px;color:#eeeaff;padding:9px 12px;cursor:pointer}button:hover{background:#39415b}button:focus-visible,input:focus-visible,textarea:focus-visible,.tile:focus-visible{outline:2px solid #baadff;outline-offset:3px}button:disabled{opacity:.5;cursor:wait}button.red{border-color:#a7575c;color:#ffd9df}
+input,textarea{background:#161927;color:white;border:1px solid #49516b;border-radius:8px;padding:10px}#search{width:200px}main{padding:18px max(12px,3vw) 50px;max-width:2100px;margin:auto}.topline{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.hint,.stats,footer,.source{font-size:12px;color:var(--muted)}.hint{margin:0}.stats{white-space:nowrap}#notice{font-size:12px;color:#9be2c1;min-height:20px;margin:8px 0 15px}
+.tier{display:flex;background:#171a24;border:1px solid var(--border);margin:0 0 11px;min-height:106px;border-radius:12px;overflow:hidden}.tier.drag-over{border-color:#c5b5ff;background:#25273d}.tier-label{flex:0 0 81px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:29px;font-weight:900;color:#14151b}.tier-label small{font-size:12px}.tier-cards{flex:1;display:flex;flex-wrap:wrap;align-content:flex-start;align-items:flex-start;gap:7px;padding:11px;min-width:0;min-height:106px}.tier.empty .tier-cards::after{content:'Drop games here';color:#70788e;margin:auto;font-size:13px}.tier.drag-over .tier-cards::after{display:none}
+.tile{position:relative;width:116px;height:82px;border:1px solid #4b536a;border-radius:7px;overflow:hidden;background:#232737;cursor:grab;user-select:none;flex:0 0 auto;touch-action:pan-y}.tile:hover{border-color:#ccc7ff}.tile img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}.tile .name{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,#000e 30%);padding:18px 4px 4px;color:white;line-height:1.15;font-size:10px;text-align:center;max-height:42px;overflow:hidden;text-shadow:0 1px 3px black}.tile .review{position:absolute;right:4px;top:3px;padding:0 3px;background:#152c23e8;border-radius:3px;color:#c6ffdf;font-size:10px}.tile.dragging{opacity:.2}.drop-slot{width:116px;height:82px;flex:0 0 auto;border:2px dashed #c1b3ff;border-radius:7px;background:#a48aff1a;display:flex;align-items:center;justify-content:center;pointer-events:none}.drop-slot::after{content:'Drop here';font-size:11px;color:#d9d0ff}.drag-active{cursor:grabbing}.scroll-cue{position:fixed;left:0;right:0;z-index:80;pointer-events:none;height:48px;display:flex;justify-content:center;align-items:center;background:#312751e8;color:#ede6ff;font-size:12px}.scroll-cue.top{top:0}.scroll-cue.bottom{bottom:0}
+#tooltip{position:fixed;z-index:50;pointer-events:none;background:#f8f8ff;color:#181923;border:1px solid #a8a8d4;border-radius:9px;padding:10px 12px;width:300px;max-width:85vw;box-shadow:0 15px 45px #0008;display:none;font-size:12px}.tttitle{font-size:15px;font-weight:800}.ttmuted{color:#60637c;margin-top:4px}.ttnotes{border-top:1px solid #dedeea;margin-top:7px;padding-top:6px}
+#overlay:not([hidden]){position:fixed;inset:0;z-index:60;background:#050512bb;display:flex;align-items:center;justify-content:center;padding:16px}.modal{background:#222638;border:1px solid #5b6381;border-radius:16px;width:min(500px,100%);padding:22px;max-height:90vh;overflow:auto}.modal h2{margin:0 30px 10px 0;font-size:21px}.modal-close{float:right;background:transparent;border:0;font-size:24px;padding:0 4px}.tiers-select{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0}.tiers-select button{min-width:42px;font-weight:800}.tiers-select .selected{border-color:white;box-shadow:0 0 0 2px #ad9afe}.check{display:flex;align-items:center;gap:8px;margin:12px 0}.field{display:block;margin-top:14px}.modal textarea{width:100%;margin-top:6px}.modal-bottom{display:flex;justify-content:flex-end;margin-top:18px}.source{line-height:1.7}.source a,footer a{color:#c6bdff}.source a{margin-right:12px}footer{padding:18px 0;text-align:center}
+.tile-metrics{position:absolute;top:3px;left:3px;right:3px;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:2px;pointer-events:none}.metric{padding:0 3px;border-radius:3px;background:#17202bf2;color:#edf2ff;font-size:9px;line-height:11px;white-space:nowrap;font-variant-numeric:tabular-nums}.metric.steam{background:#152c23ed;color:#c6ffdf}.metric.galaxy,.metric.hours{background:#302044ed;color:#e4d4ff}.metric.incrementaldb{background:#183044ed;color:#cceaff}.metric.itch{background:#4a252eed;color:#ffdae1}.tile .name{padding:5px 4px 3px;max-height:31px}
+.metric.apple{background:#303744ed;color:#edf1ff}.metric.google{background:#163d34ed;color:#c9ffe6}.badge-toggle{display:flex;align-items:center;gap:5px;font-size:12px;color:#cbd0e4;white-space:nowrap;cursor:pointer}.badge-toggle input{margin:0;accent-color:#b7a4ff}.hide-score-badges .tile-metrics{display:none}
+.scroll-cue[hidden]{display:none}.drag-active .tile.dragging{display:block;position:absolute;left:-10000px;opacity:0;pointer-events:none}
+@media(max-width:800px){header{position:relative;padding:13px}.tier-label{flex-basis:52px;font-size:23px}.tier-cards{padding:7px;gap:5px;min-height:85px}.tile,.drop-slot{width:91px;height:69px}.tile .name{font-size:9px}.tier{min-height:85px}.actions{gap:6px}.actions button{padding:7px 8px;font-size:12px}#search{width:100%}}
+@media(max-width:800px){.metric{font-size:8px;line-height:9px;padding:0 2px}.tile-metrics{gap:1px}.tile .name{padding:3px 3px 2px;max-height:27px}}
+:root{--tile-width:116px;--tile-height:82px;--tile-gap:7px;--card-pad:11px;--header-height:130px;--unranked-width:calc(3 * var(--tile-width) + 2 * var(--tile-gap) + 2 * var(--card-pad) + 22px)}
+.ranking-actions{display:flex;justify-content:center;align-items:center;gap:6px;flex:0 0 auto}.actions{gap:8px}.actions button{white-space:nowrap;padding:8px 10px;font-size:13px}#search{width:clamp(120px,12vw,180px)}
+@media(max-width:800px){.actions{gap:6px}.actions button{padding:7px 8px;font-size:12px}#search{width:100%}}
+@media(max-width:480px){.ranking-actions{flex-wrap:wrap;justify-content:flex-start;flex:1 1 100%}}
+#board{display:grid;grid-template-columns:minmax(0,1fr) var(--unranked-width);align-items:start;gap:16px}.ranked-board{min-width:0}
+#board.unranked-minimized{grid-template-columns:minmax(0,1fr) 90px}
+.tile,.drop-slot{width:var(--tile-width);height:var(--tile-height)}.tier-cards{gap:var(--tile-gap);padding:var(--card-pad)}
+.unranked-panel{position:sticky;top:calc(var(--header-height) + 16px);width:100%;min-height:0;max-height:max(180px,calc(100dvh - var(--header-height) - 32px));display:flex;flex-direction:column;margin-bottom:0}
+.unranked-panel>.tier-label{flex:0 0 auto;min-height:64px;display:grid;grid-template-columns:auto 1fr auto;gap:10px;padding:10px 12px;text-align:left}
+.unranked-toggle{font-size:12px;padding:5px 8px;background:#222638;color:#fff;border-color:#71758a}
+.unranked-panel .tier-cards{display:grid;grid-template-columns:repeat(3,var(--tile-width));align-content:start;min-height:106px;overflow-y:auto;overscroll-behavior:contain;flex:1 1 auto;scrollbar-gutter:stable}
+.unranked-panel .tier-cards[hidden]{display:none}.unranked-panel.empty .tier-cards::after{grid-column:1/-1}
+.unranked-panel.minimized>.tier-label{display:flex;flex-direction:column;gap:6px;text-align:center}
+@media(max-width:800px){:root{--tile-width:91px;--tile-height:69px;--tile-gap:5px;--card-pad:7px}#board{gap:10px}}
+@media(max-width:640px){:root{--tile-width:clamp(76px,calc((100vw - 72px)/3),91px);--tile-height:82px}#board,#board.unranked-minimized{grid-template-columns:minmax(0,1fr)}.unranked-panel{position:static;width:var(--unranked-width);max-width:100%;justify-self:end;max-height:70dvh}.unranked-panel.minimized{width:90px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div><h1>Incremental Game Tier List</h1><p class="subtitle">Your rankings, saved in this browser</p></div>
+    <div class="actions">
+      <input id="search" type="search" placeholder="Search games…" aria-label="Search games">
+      <label class="badge-toggle"><input id="showScoreBadges" type="checkbox" checked> Show score badges</label>
+      <div class="ranking-actions">
+        <button id="reset" class="red">Reset List</button>
+        <button id="loadPreset" disabled>Load miserable_duck's Rankings</button>
+      </div>
+      <button id="csv">Export CSV</button><button id="png">Export PNG</button>
+      <button id="json" title="Save your rankings as a JSON file">Save</button><button id="import" title="Load rankings from a JSON file">Load</button>
+      <input id="importFile" type="file" accept=".json,application/json" hidden>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="topline"><p class="hint">Drag a game into an empty slot. Hold near the top or bottom edge to scroll. Click a game to choose a tier or add notes.</p><span id="stats" class="stats"></span></div>
+  <p id="notice" role="status" aria-live="polite">Loading games…</p>
+  <div id="board" aria-label="Game tier list"></div>
+  <footer>Saved on this device. Use Save to transfer your list or keep a copy. <a href="https://galaxy.click" target="_blank" rel="noopener">Galaxy</a> · <a href="https://www.incrementaldb.com" target="_blank" rel="noopener">IncrementalDB</a> · <a href="https://itch.io" target="_blank" rel="noopener">itch.io</a> · <a href="https://incrementalgames.org" target="_blank" rel="noopener">Catalog</a></footer>
+</main>
+<div id="tooltip" role="tooltip"></div>
+<div id="overlay" hidden>
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalName">
+    <button id="modalClose" class="modal-close" aria-label="Close">×</button>
+    <h2 id="modalName"></h2><div id="modalInfo" class="source"></div>
+    <div id="modalLinks" class="source"></div>
+    <div id="modalTiers" class="tiers-select"></div>
+    <label class="check"><input id="modalPlayed" type="checkbox"> I've played this game</label>
+    <label class="field" for="modalNote">Personal notes</label>
+    <textarea id="modalNote" rows="3" maxlength="1500"></textarea>
+    <div class="modal-bottom"><button id="modalSave">Save changes</button></div>
+  </section>
+</div>
+<script>'use strict';
+const TIERS = ['SS', 'S', 'A', 'B', 'C', 'D', 'F', '?'];
+const RANKED_TIERS = TIERS.filter(t=>t!=='?');
+const COLORS = {SS:'#d1b8ff',S:'#ffb7a5',A:'#ffd09a',B:'#ffe3a0',C:'#fff2b0',D:'#bfe3ba',F:'#abc9e9','?':'#c8cbd2'};
+const THOUSANDS = new Intl.NumberFormat('en-US', {maximumFractionDigits:1});
+const STORAGE_KEY = 'incremental-tierlist:v3';
+const $ = id => document.getElementById(id);
+const byId = new Map(), tiles = new Map(), lanes = new Map();
+let games = [], placements = {}, groups = new Map(), search = '', selected = null;
+let drag = null, frame = 0, previousFrame = 0, suppressClickUntil = 0;
+let storageAvailable = true, pendingSave = false, searchFrame = 0, returnFocus = null;
+let showScoreBadges = true;
+let unrankedMinimized = false, ownerPreset = null;
+const slot = document.createElement('div');
+slot.className = 'drop-slot';
+slot.setAttribute('aria-hidden', 'true');
+const cue = document.createElement('div');
+cue.className = 'scroll-cue';
+cue.hidden = true;
+document.body.append(cue);
+
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text != null) node.textContent = text;
+  return node;
+}
+function notify(text) { $('notice').textContent = text; }
+function ordered(tier) { return groups.get(tier) || []; }
+function regroup() {
+  groups = new Map(TIERS.map(t => [t, []]));
+  for (const game of games) groups.get(placements[game.id].tier).push(game);
+  for (const list of groups.values()) list.sort((a,b) => placements[a.id].order - placements[b.id].order);
+}
+function cleanPersonal(value, fallback) {
+  if (!value || typeof value !== 'object') return {...fallback};
+  return {
+    tier: TIERS.includes(value.tier) ? value.tier : fallback.tier,
+    order: Number.isFinite(value.order) ? value.order : fallback.order,
+    played: typeof value.played === 'boolean' ? value.played : fallback.played,
+    note: typeof value.note === 'string' ? value.note.slice(0,1500) : fallback.note
+  };
+}
+function personalSnapshot() {
+  return Object.fromEntries(games.map(g => {
+    const p = placements[g.id];
+    return [g.id, {tier:p.tier,order:p.order,played:p.played,note:p.note}];
+  }));
+}
+function persist() {
+  pendingSave = false;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({version:3, showScoreBadges, unrankedMinimized, placements:personalSnapshot()}));
+    storageAvailable = true;
+    notify('✓ Saved in this browser');
+  } catch (error) {
+    storageAvailable = false;
+    notify('Browser storage is unavailable or full. Use Save to keep your changes.');
+  }
+}
+function save() { pendingSave = true; persist(); }
+window.addEventListener('pagehide', () => { if (pendingSave) persist(); });
+
+function galaxyHours(hours) { return THOUSANDS.format(Number(hours)/1000)+'k'; }
+function cardMetrics(p) {
+  const metrics=el('div','tile-metrics');
+  function badge(source,text,label) {
+    const item=el('span','metric '+source,text);
+    item.title=label;item.setAttribute('aria-label',label);metrics.append(item);
+  }
+  if(p.reviews!=null)badge('steam',p.reviews+'%','Steam: '+p.reviews+'% positive');
+  if(p.galaxy_score!=null)badge('galaxy','G '+Number(p.galaxy_score).toFixed(1)+'★','Galaxy: '+Number(p.galaxy_score).toFixed(2)+' / 5');
+  if(p.galaxy_hours!=null)badge('hours','G '+galaxyHours(p.galaxy_hours)+' h','Galaxy total play time: '+galaxyHours(p.galaxy_hours)+' hours');
+  if(p.incrementaldb_upvotes!=null)badge('incrementaldb','DB ↑'+Number(p.incrementaldb_upvotes).toLocaleString(),'IncrementalDB: '+Number(p.incrementaldb_upvotes).toLocaleString()+' upvotes');
+  if(p.itch_score!=null)badge('itch','I '+Number(p.itch_score).toFixed(1)+'★','itch.io: '+Number(p.itch_score).toFixed(1)+' / 5');
+  if(p.apple_score!=null)badge('apple','A '+Number(p.apple_score).toFixed(1)+'★','Apple App Store (US): '+Number(p.apple_score).toFixed(1)+' / 5');
+  if(p.google_score!=null)badge('google','GP '+Number(p.google_score).toFixed(1)+'★','Google Play (US): '+Number(p.google_score).toFixed(1)+' / 5');
+  return metrics;
+}
+function statLines(p) {
+  const lines = [];
+  if (p.reviews != null) lines.push(`Steam: ${p.reviews}% positive${p.review_count != null ? ` · ${Number(p.review_count).toLocaleString()} reviews` : ''}`);
+  if (p.galaxy_score != null) lines.push(`Galaxy: ${Number(p.galaxy_score).toFixed(2)} / 5${p.galaxy_votes != null ? ` · ${Number(p.galaxy_votes).toLocaleString()} ratings` : ''}`);
+  if (p.galaxy_hours != null) lines.push(`Galaxy total play time: ${galaxyHours(p.galaxy_hours)} hours`);
+  if (p.incrementaldb_upvotes != null) lines.push(`IncrementalDB: ${Number(p.incrementaldb_upvotes).toLocaleString()} upvotes`);
+  if (p.itch_score != null) lines.push(`itch.io: ${Number(p.itch_score).toFixed(1)} / 5${p.itch_votes != null ? ` · ${Number(p.itch_votes).toLocaleString()} ratings` : ''}`);
+  if (p.apple_score != null) lines.push(`Apple App Store (US): ${Number(p.apple_score).toFixed(1)} / 5${p.apple_votes != null ? ` · ${Number(p.apple_votes).toLocaleString()} ratings` : ''}`);
+  if (p.google_score != null) lines.push(`Google Play (US): ${Number(p.google_score).toFixed(1)} / 5${p.google_votes != null ? ` · ${Number(p.google_votes).toLocaleString()} ratings` : ''}`);
+  return lines;
+}
+function makeTile(game) {
+  const node = el('div','tile');
+  node.dataset.id = game.id;
+  node.draggable = true;
+  node.tabIndex = 0;
+  node.setAttribute('role','button');
+  node.setAttribute('aria-label',`${game.name}; click to choose a tier`);
+  const image = el('img');
+  image.loading = 'lazy'; image.decoding = 'async'; image.draggable = false; image.alt = game.name;
+  image.src = placements[game.id].cover;
+  image.addEventListener('error', () => {image.hidden=true;});
+  node.append(image,el('div','name',game.name));
+  node.append(cardMetrics(placements[game.id]));
+  node.addEventListener('mouseenter', e => showTip(e,game));
+  node.addEventListener('mousemove', moveTip);
+  node.addEventListener('mouseleave', hideTip);
+  node.addEventListener('click', () => { if (!drag && performance.now() > suppressClickUntil) openModal(game.id); });
+  node.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(game.id); } });
+  node.addEventListener('dragstart', e => beginDrag(e,game,node));
+  node.addEventListener('dragend', finishDrag);
+  return node;
+}
+function buildBoard() {
+  const ranked=el('div','ranked-board');
+  let unranked=null;
+  for (const tier of TIERS) {
+    const section = el('section','tier'); section.dataset.tier = tier;
+    const label = el('div','tier-label'); label.style.background = COLORS[tier];
+    const title = el('div','',tier); const count = el('small'); label.append(title,count);
+    const cards = el('div','tier-cards'); section.append(label,cards);
+    if(tier==='?'){
+      section.classList.add('unranked-panel');section.setAttribute('aria-label','Unranked games');
+      cards.id='unrankedCards';
+      const toggle=el('button','unranked-toggle');toggle.id='toggleUnranked';toggle.type='button';
+      toggle.setAttribute('aria-controls',cards.id);toggle.onclick=()=>setUnrankedMinimized(!unrankedMinimized);
+      label.append(toggle);unranked=section;
+    }else ranked.append(section);
+    section.addEventListener('dragover', e => {
+      if (!drag) return;
+      e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+      drag.x=e.clientX; drag.y=e.clientY;
+    });
+    section.addEventListener('drop', e => {
+      if (!drag) return;
+      e.preventDefault();
+      drag.x=e.clientX; drag.y=e.clientY; updateDropSlot();
+      const id=drag.id, target=drag.target, before=drag.before;
+      finishDrag();
+      if (target) moveGame(id,target,before);
+    });
+    lanes.set(tier,{section,cards,count,nodes:[]});
+  }
+  $('board').replaceChildren(ranked,unranked);
+  setUnrankedMinimized(unrankedMinimized,false);
+}
+function setUnrankedMinimized(minimized,savePreference=true){
+  unrankedMinimized=minimized;
+  const lane=lanes.get('?');
+  if(!lane)return;
+  lane.cards.hidden=minimized;lane.section.classList.toggle('minimized',minimized);
+  $('board').classList.toggle('unranked-minimized',minimized);
+  $('toggleUnranked').textContent=minimized?'Expand':'Minimize';
+  $('toggleUnranked').setAttribute('aria-expanded',String(!minimized));
+  if(savePreference)save();
+}
+function draw() {
+  regroup();
+  let visible = 0;
+  for (const tier of TIERS) {
+    const lane = lanes.get(tier), fragment = document.createDocumentFragment();
+    const list = ordered(tier);
+    lane.nodes=[];
+    lane.count.textContent = list.length;
+    let shown = 0;
+    for (const game of list) {
+      if (search && !game.searchName.includes(search)) continue;
+      let tile = tiles.get(game.id);
+      if (!tile) { tile=makeTile(game); tiles.set(game.id,tile); }
+      const source=placements[game.id].cover;
+      if(tile.dataset.cover!==source){tile.dataset.cover=source;const image=tile.querySelector('img');image.hidden=false;image.src=source;}
+      fragment.append(tile); lane.nodes.push(tile); shown++; visible++;
+    }
+    const scrollTop=lane.cards.scrollTop;
+    lane.cards.replaceChildren(fragment);
+    if(tier==='?')lane.cards.scrollTop=scrollTop;
+    lane.section.classList.toggle('empty', shown===0);
+  }
+  $('stats').textContent = `${visible} / ${games.length} games`;
+}
+function moveGame(id,tier,beforeId) {
+  if (!byId.has(id) || !TIERS.includes(tier)) return;
+  const old = placements[id].tier;
+  const from = ordered(old).filter(g=>g.id!==id);
+  const to = old===tier ? from : ordered(tier).filter(g=>g.id!==id);
+  let index = beforeId ? to.findIndex(g=>g.id===beforeId) : to.length;
+  if (index<0) index=to.length;
+  to.splice(index,0,byId.get(id));
+  from.forEach((g,i)=>{placements[g.id].order=i;});
+  to.forEach((g,i)=>{placements[g.id].order=i;});
+  placements[id].tier=tier;
+  draw(); save();
+}
+
+function beginDrag(e,game,node) {
+  if (drag) finishDrag();
+  hideTip();
+  e.dataTransfer.effectAllowed='move';
+  e.dataTransfer.setData('text/plain',game.id);
+  e.dataTransfer.setDragImage(node,Math.min(e.offsetX,node.offsetWidth),Math.min(e.offsetY,node.offsetHeight));
+  drag={id:game.id,node,x:e.clientX,y:e.clientY,target:null,before:null,started:false,
+    candidates:new Map(Array.from(lanes,([tier,lane])=>[tier,lane.nodes.filter(n=>n!==node)]))};
+  node.classList.add('dragging');
+  previousFrame=performance.now();
+  frame=requestAnimationFrame(dragFrame);
+}
+function updateDropSlot() {
+  if (!drag) return;
+  const element=document.elementFromPoint(drag.x,drag.y);
+  const section=element?.closest('.tier');
+  const tier=section?.dataset.tier;
+  if (!tier) {
+    if (drag.target) lanes.get(drag.target).section.classList.remove('drag-over');
+    drag.target=null; drag.before=null; slot.remove(); return;
+  }
+  if (drag.target!==tier) {
+    if (drag.target) lanes.get(drag.target).section.classList.remove('drag-over');
+    section.classList.add('drag-over');
+  }
+  const lane=lanes.get(tier), rect=lane.cards.getBoundingClientRect();
+  if(lane.cards.hidden){drag.target=tier;drag.before=null;slot.remove();return;}
+  const style=getComputedStyle(lane.cards);
+  const gap=parseFloat(style.columnGap)||0, rowGap=parseFloat(style.rowGap)||0;
+  const padX=parseFloat(style.paddingLeft)||0, padY=parseFloat(style.paddingTop)||0;
+  const tileWidth=drag.node.offsetWidth, tileHeight=drag.node.offsetHeight;
+  const available=lane.cards.clientWidth-padX-(parseFloat(style.paddingRight)||0);
+  const columns=Math.max(1,Math.floor((available+gap)/(tileWidth+gap)));
+  const column=Math.max(0,Math.min(columns-1,Math.floor((drag.x-rect.left-padX+gap/2)/(tileWidth+gap))));
+  const row=Math.max(0,Math.floor((drag.y-rect.top-padY+lane.cards.scrollTop+rowGap/2)/(tileHeight+rowGap)));
+  const children=drag.candidates.get(tier);
+  const index=Math.min(children.length,row*columns+column);
+  const before=children[index]||null;
+  if (slot.parentNode!==lane.cards || slot.nextElementSibling!==before) lane.cards.insertBefore(slot,before);
+  drag.target=tier; drag.before=before?.dataset.id||null;
+}
+function dragFrame(now) {
+  if (!drag) return;
+  if (!drag.started) { document.body.classList.add('drag-active'); drag.started=true; }
+  const dt=Math.min(40,now-previousFrame); previousFrame=now;
+  const headerBottom=document.querySelector('header').getBoundingClientRect().bottom;
+  const top=Math.min(Math.max(headerBottom,0),innerHeight/3), edge=85;
+  let speed=0;
+  const unranked=lanes.get('?'),hovered=document.elementFromPoint(drag.x,drag.y);
+  const overUnranked=hovered?.closest('.unranked-panel')===unranked.section&&!unranked.cards.hidden;
+  if(overUnranked){
+    const rect=unranked.cards.getBoundingClientRect(),zone=Math.min(70,rect.height/3);
+    if(drag.y<rect.top+zone)speed=-Math.min(1,(rect.top+zone-drag.y)/zone);
+    else if(drag.y>rect.bottom-zone)speed=Math.min(1,(drag.y-rect.bottom+zone)/zone);
+    if(speed)unranked.cards.scrollTop+=speed*dt;
+  }else{
+    if (drag.y<top+edge) speed=-Math.min(1,(top+edge-drag.y)/edge);
+    else if (drag.y>innerHeight-edge) speed=Math.min(1,(drag.y-innerHeight+edge)/edge);
+    if (speed) window.scrollBy(0,speed*dt);
+  }
+  cue.hidden=!speed;
+  cue.className='scroll-cue '+(speed<0?'top':'bottom');
+  cue.textContent=speed<0?'↑ Scrolling up':'↓ Scrolling down';
+  updateDropSlot();
+  frame=requestAnimationFrame(dragFrame);
+}
+function finishDrag() {
+  cancelAnimationFrame(frame); frame=0;
+  if (drag) drag.node.classList.remove('dragging');
+  for (const lane of lanes.values()) lane.section.classList.remove('drag-over');
+  document.body.classList.remove('drag-active');
+  slot.remove(); cue.hidden=true; drag=null;
+  suppressClickUntil=performance.now()+180;
+}
+document.addEventListener('dragover',e=>{
+  if (!drag) return;
+  e.preventDefault(); drag.x=e.clientX; drag.y=e.clientY;
+});
+document.addEventListener('wheel',e=>{
+  if (!drag) return;
+  e.preventDefault();
+  const cards=e.target.closest?.('.unranked-panel .tier-cards');
+  const delta=e.deltaY*(e.deltaMode===1?18:e.deltaMode===2?innerHeight:1);
+  if(cards&&!cards.hidden)cards.scrollTop+=delta;else window.scrollBy(0,delta);
+},{passive:false});
+document.addEventListener('drop',()=>{if(drag)finishDrag();});
+window.addEventListener('blur',finishDrag);
+
+function showTip(e,g) {
+  if(drag) return;
+  const tt=$('tooltip'),p=placements[g.id]; tt.replaceChildren(el('div','tttitle',g.name));
+  for(const line of statLines(p))tt.append(el('div','ttmuted',line));
+  if(p.note)tt.append(el('div','ttnotes','Your note: '+p.note));
+  if(p.checked_at)tt.append(el('div','ttmuted','Stats checked '+new Date(p.checked_at).toLocaleDateString()));
+  tt.style.display='block'; moveTip(e);
+}
+function moveTip(e){const tt=$('tooltip');if(tt.style.display!=='block')return;tt.style.left=Math.max(6,Math.min(innerWidth-tt.offsetWidth-8,e.clientX+16))+'px';tt.style.top=Math.max(6,Math.min(innerHeight-tt.offsetHeight-8,e.clientY+18))+'px';}
+function hideTip(){$('tooltip').style.display='none';}
+function openModal(id) {
+  selected=id; returnFocus=document.activeElement; hideTip();
+  const p=placements[id]; $('modalName').textContent=byId.get(id).name;
+  $('modalInfo').replaceChildren(...statLines(p).map(line=>el('div','',line)));
+  $('modalPlayed').checked=p.played; $('modalNote').value=p.note;
+  $('modalTiers').replaceChildren(...TIERS.map(t=>{
+    const button=el('button',t===p.tier?'selected':'',t==='?'?'Unranked':t);
+    button.dataset.tier=t;button.style.borderBottom='4px solid '+COLORS[t];button.setAttribute('aria-pressed',String(t===p.tier));
+    button.onclick=()=>{for(const b of $('modalTiers').children){b.classList.toggle('selected',b===button);b.setAttribute('aria-pressed',String(b===button));}};
+    return button;
+  }));
+  $('modalLinks').replaceChildren();
+  for(const [key,label] of [['steam','Steam'],['galaxy','Galaxy'],['incrementaldb','IncrementalDB'],['itch','itch.io'],['apple','App Store'],['google','Google Play']]){
+    const url=p.links?.[key];if(!url||!url.startsWith('https://'))continue;
+    const a=el('a','',label);a.href=url;a.target='_blank';a.rel='noopener';$('modalLinks').append(a);
+  }
+  $('overlay').hidden=false;$('modalClose').focus();
+}
+function closeModal(){$('overlay').hidden=true;selected=null;if(returnFocus?.isConnected)returnFocus.focus();}
+function saveModal(){if(!selected)return;const id=selected,p=placements[id],tier=$('modalTiers').querySelector('.selected').dataset.tier;p.played=$('modalPlayed').checked;p.note=$('modalNote').value.trim();closeModal();if(tier!==p.tier)moveGame(id,tier,null);else save();}
+function download(name,content,type){const url=URL.createObjectURL(new Blob([content],{type})),a=el('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);}
+function exportJSON(){download('my_incremental_tierlist.json',JSON.stringify({version:3,created:new Date().toISOString(),placements:personalSnapshot()},null,2),'application/json');}
+function escapeCSV(value){const text=String(value??'');return /[",\r\n]/.test(text)?'"'+text.replace(/"/g,'""')+'"':text;}
+function exportCSV(){const rows=[['Game','Tier','Played','Steam positive %','Steam review count','Galaxy score / 5','Galaxy ratings','Galaxy total hours','IncrementalDB upvotes','itch.io score / 5','itch.io ratings','Apple score / 5 (US)','Apple ratings (US)','Google Play score / 5 (US)','Google Play ratings (US)','Notes']];for(const t of RANKED_TIERS)for(const g of ordered(t)){const p=placements[g.id];rows.push([g.name,t,p.played?'Yes':'No',p.reviews,p.review_count,p.galaxy_score,p.galaxy_votes,p.galaxy_hours,p.incrementaldb_upvotes,p.itch_score,p.itch_votes,p.apple_score,p.apple_votes,p.google_score,p.google_votes,p.note]);}download('my_incremental_tierlist.csv',rows.map(r=>r.map(escapeCSV).join(',')).join('\r\n'),'text/csv;charset=utf-8');}
+function resetList(){if(!confirm('Start a fresh list with every game unranked and clear your notes? A recovery copy will be downloaded first.'))return;exportJSON();games.forEach((g,i)=>Object.assign(placements[g.id],{tier:'?',order:i,played:false,note:''}));search='';$('search').value='';draw();save();}
+function loadOwnerRankings(){
+  if(!ownerPreset?.placements)return;
+  if(RANKED_TIERS.some(t=>ordered(t).length)){
+    if(!confirm("Replace your tiers with miserable_duck's rankings? A recovery JSON copy will be downloaded first."))return;
+    exportJSON();
+  }
+  games.forEach((g,i)=>{const preset=ownerPreset.placements[g.id];Object.assign(placements[g.id],{
+    tier:TIERS.includes(preset?.tier)?preset.tier:'?',order:Number.isFinite(preset?.order)?preset.order:i
+  });});
+  search='';$('search').value='';draw();save();
+}
+async function importBackup(file){try{if(file.size>5000000)throw Error('JSON file exceeds the 5 MB limit.');const data=JSON.parse(await file.text());if(!data.placements||typeof data.placements!=='object'||Array.isArray(data.placements))throw Error('No placements found.');let count=0;for(const g of games){const value=data.placements[g.id];if(value&&TIERS.includes(value.tier)){Object.assign(placements[g.id],cleanPersonal(value,placements[g.id]));count++;}}if(!count)throw Error('No matching games found.');draw();save();notify(`Imported ${count} games. ${storageAvailable?'Saved in this browser.':'Use Save to keep a copy.'}`);}catch(error){alert('Could not import backup: '+error.message);}finally{$('importFile').value='';}}
+
+function loadImage(src){return new Promise(resolve=>{const image=new Image();if(new URL(src,location.href).origin!==location.origin)image.crossOrigin='anonymous';image.onload=()=>resolve(image);image.onerror=()=>resolve(null);image.src=src;});}
+async function exportPNG(){const button=$('png');button.disabled=true;button.textContent='Rendering…';try{
+  const width=2200,label=126,cw=126,ch=87,gap=8,pad=12,cols=Math.floor((width-label-pad*2)/(cw+gap));
+  const lists=RANKED_TIERS.map(t=>ordered(t)),heights=lists.map(list=>Math.max(110,Math.ceil(list.length/cols)*(ch+gap)+pad*2));
+  const canvas=document.createElement('canvas');canvas.width=width;canvas.height=heights.reduce((a,b)=>a+b,0)+115;const ctx=canvas.getContext('2d');
+  const rankedCount=lists.reduce((count,list)=>count+list.length,0);
+  ctx.fillStyle='#0f111a';ctx.fillRect(0,0,width,canvas.height);ctx.fillStyle='#f5f3ff';ctx.font='bold 40px system-ui';ctx.fillText('INCREMENTAL GAMES — MY TIER LIST',30,55);ctx.font='19px system-ui';ctx.fillText(`${rankedCount} ranked games · ${new Date().toLocaleDateString()}`,32,86);
+  let y=115;
+  for(let k=0;k<RANKED_TIERS.length;k++){
+    const tier=RANKED_TIERS[k],list=lists[k],height=heights[k];ctx.fillStyle='#181b28';ctx.fillRect(0,y,width,height-4);ctx.fillStyle=COLORS[tier];ctx.fillRect(0,y,label,height-4);ctx.fillStyle='#11131b';ctx.font='bold 49px system-ui';ctx.textAlign='center';ctx.fillText(tier,label/2,y+65);ctx.font='bold 22px system-ui';ctx.fillText(String(list.length),label/2,y+95);ctx.textAlign='left';
+    for(let start=0;start<list.length;start+=16){
+      const batch=list.slice(start,start+16),images=await Promise.all(batch.map(g=>loadImage(placements[g.id].cover)));
+      batch.forEach((g,offset)=>{const index=start+offset,x=label+pad+(index%cols)*(cw+gap),yy=y+pad+Math.floor(index/cols)*(ch+gap),image=images[offset];ctx.fillStyle='#2a2d41';ctx.fillRect(x,yy,cw,ch);if(image){const scale=Math.max(cw/image.width,ch/image.height),sw=cw/scale,sh=ch/scale;ctx.drawImage(image,(image.width-sw)/2,(image.height-sh)/2,sw,sh,x,yy,cw,ch);}ctx.fillStyle='#10111aee';ctx.fillRect(x,yy+ch-26,cw,26);ctx.font='bold 11px system-ui';ctx.fillStyle='white';let text=g.name;while(ctx.measureText(text).width>cw-8&&text.length>2)text=text.slice(0,-2);if(text!==g.name)text+='…';ctx.fillText(text,x+4,yy+ch-9);});
+    }
+    y+=height;
+  }
+  const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw Error('Image could not be created.');download('my_incremental_tierlist.png',blob,'image/png');
+}catch(error){alert('PNG export failed: '+error.message);}finally{button.disabled=false;button.textContent='Export PNG';}}
+
+async function init(){try{
+  const source=document.documentElement.dataset.source;
+  const response=await fetch(source,{cache:'no-cache'});if(!response.ok)throw Error('Could not load game data.');
+  const data=await response.json();games=data.games.map(g=>({...g,searchName:g.name.toLowerCase()}));
+  ownerPreset=data.presets?.miserable_duck||null;$('loadPreset').disabled=!ownerPreset?.placements;
+  let saved=null;try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const parsed=JSON.parse(raw);if(parsed.version===3&&parsed.placements&&typeof parsed.placements==='object'){saved=parsed.placements;if(typeof parsed.showScoreBadges==='boolean')showScoreBadges=parsed.showScoreBadges;if(typeof parsed.unrankedMinimized==='boolean')unrankedMinimized=parsed.unrankedMinimized;}}}catch(error){notify('Could not read browser storage. Your list can still be exported.');}
+  $('showScoreBadges').checked=showScoreBadges;document.body.classList.toggle('hide-score-badges',!showScoreBadges);
+  games.forEach((g,i)=>{byId.set(g.id,g);const seed=data.placements?.[g.id]||{};const fallback={tier:'?',order:i,played:false,note:''};placements[g.id]={...seed,...cleanPersonal(saved?.[g.id],fallback)};});
+  buildBoard();draw();
+  persist();if(saved&&storageAvailable)notify('Your saved list is loaded.');
+}catch(error){notify(error.message+' Serve the site over HTTP rather than opening index.html directly.');}}
+$('search').addEventListener('input',e=>{search=e.target.value.trim().toLowerCase();if(!searchFrame)searchFrame=requestAnimationFrame(()=>{searchFrame=0;draw();});});
+$('csv').onclick=exportCSV;$('json').onclick=exportJSON;$('png').onclick=exportPNG;$('reset').onclick=resetList;
+$('loadPreset').onclick=loadOwnerRankings;
+$('showScoreBadges').onchange=e=>{showScoreBadges=e.target.checked;document.body.classList.toggle('hide-score-badges',!showScoreBadges);save();};
+$('import').onclick=()=>$('importFile').click();$('importFile').onchange=e=>{if(e.target.files[0])importBackup(e.target.files[0]);};
+$('modalClose').onclick=closeModal;$('modalSave').onclick=saveModal;
+$('overlay').onclick=e=>{if(e.target===$('overlay'))closeModal();};
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){finishDrag();if(!$('overlay').hidden)closeModal();}
+  if(e.key==='Tab'&&!$('overlay').hidden){const items=Array.from($('overlay').querySelectorAll('button,input,textarea,a[href]')),first=items[0],last=items[items.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}
+});
+window.addEventListener('storage',e=>{if(e.key===STORAGE_KEY)notify('This list changed in another tab. Reload to load its saved rankings.');});
+const header=document.querySelector('header');
+const updateHeaderHeight=()=>document.documentElement.style.setProperty('--header-height',header.getBoundingClientRect().height+'px');
+updateHeaderHeight();new ResizeObserver(updateHeaderHeight).observe(header);
+init();
+</script>
+</body>
+</html>
