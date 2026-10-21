@@ -75,6 +75,7 @@ const TIERS = ['SS', 'S', 'A', 'B', 'C', 'D', 'F', '?'];
 const RANKED_TIERS = TIERS.filter(t=>t!=='?');
 const COLORS = {SS:'#d1b8ff',S:'#ffb7a5',A:'#ffd09a',B:'#ffe3a0',C:'#fff2b0',D:'#bfe3ba',F:'#abc9e9','?':'#c8cbd2'};
 const THOUSANDS = new Intl.NumberFormat('en-US', {maximumFractionDigits:1});
+const TITLE_ORDER = new Intl.Collator('en', {sensitivity:'base', numeric:true});
 const STORAGE_KEY = 'incremental-tierlist:v3';
 const $ = id => document.getElementById(id);
 const byId = new Map(), tiles = new Map(), lanes = new Map();
@@ -102,7 +103,9 @@ function ordered(tier) { return groups.get(tier) || []; }
 function regroup() {
   groups = new Map(TIERS.map(t => [t, []]));
   for (const game of games) groups.get(placements[game.id].tier).push(game);
-  for (const list of groups.values()) list.sort((a,b) => placements[a.id].order - placements[b.id].order);
+  for (const [tier,list] of groups) list.sort(tier==='?'
+    ? (a,b) => a.alphabeticalOrder - b.alphabeticalOrder
+    : (a,b) => placements[a.id].order - placements[b.id].order);
 }
 function cleanPersonal(value, fallback) {
   if (!value || typeof value !== 'object') return {...fallback};
@@ -267,6 +270,7 @@ function beginDrag(e,game,node) {
   e.dataTransfer.setDragImage(node,Math.min(e.offsetX,node.offsetWidth),Math.min(e.offsetY,node.offsetHeight));
   drag={id:game.id,node,x:e.clientX,y:e.clientY,target:null,before:null,started:false,
     candidates:new Map(Array.from(lanes,([tier,lane])=>[tier,lane.nodes.filter(n=>n!==node)]))};
+  drag.unrankedBefore=drag.candidates.get('?').find(tile=>byId.get(tile.dataset.id).alphabeticalOrder>game.alphabeticalOrder)||null;
   node.classList.add('dragging');
   previousFrame=performance.now();
   frame=requestAnimationFrame(dragFrame);
@@ -286,6 +290,11 @@ function updateDropSlot() {
   }
   const lane=lanes.get(tier), rect=lane.cards.getBoundingClientRect();
   if(lane.cards.hidden){drag.target=tier;drag.before=null;slot.remove();return;}
+  if(tier==='?'){
+    const before=drag.unrankedBefore;
+    if(slot.parentNode!==lane.cards||slot.nextElementSibling!==before)lane.cards.insertBefore(slot,before);
+    drag.target=tier;drag.before=before?.dataset.id||null;return;
+  }
   const style=getComputedStyle(lane.cards);
   const gap=parseFloat(style.columnGap)||0, rowGap=parseFloat(style.rowGap)||0;
   const padX=parseFloat(style.paddingLeft)||0, padY=parseFloat(style.paddingTop)||0;
@@ -415,6 +424,7 @@ async function init(){try{
   const source=document.documentElement.dataset.source;
   const response=await fetch(source,{cache:'no-cache'});if(!response.ok)throw Error('Could not load game data.');
   const data=await response.json();games=data.games.map(g=>({...g,searchName:g.name.toLowerCase()}));
+  games.slice().sort((a,b)=>TITLE_ORDER.compare(a.name,b.name)).forEach((g,i)=>{g.alphabeticalOrder=i;});
   ownerPreset=data.presets?.miserable_duck||null;$('loadPreset').disabled=!ownerPreset?.placements;
   let saved=null;try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const parsed=JSON.parse(raw);if(parsed.version===3&&parsed.placements&&typeof parsed.placements==='object'){saved=parsed.placements;if(typeof parsed.showScoreBadges==='boolean')showScoreBadges=parsed.showScoreBadges;if(typeof parsed.unrankedMinimized==='boolean')unrankedMinimized=parsed.unrankedMinimized;}}}catch(error){notify('Could not read browser storage. Your list can still be exported.');}
   $('showScoreBadges').checked=showScoreBadges;document.body.classList.toggle('hide-score-badges',!showScoreBadges);
