@@ -228,6 +228,8 @@ function setUnrankedMinimized(minimized,savePreference=true){
 }
 function draw() {
   regroup();
+  const unrankedCards=lanes.get('?').cards;
+  const unrankedScrollTop=unrankedCards.scrollTop;
   for (const tier of TIERS) {
     const lane = lanes.get(tier), fragment = document.createDocumentFragment();
     const list = ordered(tier);
@@ -242,11 +244,10 @@ function draw() {
       if(tile.dataset.cover!==source){tile.dataset.cover=source;const image=tile.querySelector('img');image.hidden=false;image.src=source;}
       fragment.append(tile); lane.nodes.push(tile); shown++;
     }
-    const scrollTop=lane.cards.scrollTop;
     lane.cards.replaceChildren(fragment);
-    if(tier==='?')lane.cards.scrollTop=scrollTop;
     lane.section.classList.toggle('empty', shown===0);
   }
+  unrankedCards.scrollTop=unrankedScrollTop;
 }
 function moveGame(id,tier,beforeId) {
   if (!byId.has(id) || !TIERS.includes(tier)) return;
