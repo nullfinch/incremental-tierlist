@@ -379,7 +379,7 @@ function openModal(id) {
     return button;
   }));
   $('modalLinks').replaceChildren();
-  for(const [key,label] of [['steam','Steam'],['galaxy','Galaxy'],['incrementaldb','IncrementalDB'],['itch','itch.io'],['apple','App Store'],['google','Google Play'],['official','Website']]){
+  for(const [key,label] of [['steam','Steam'],['galaxy','Galaxy'],['incrementaldb','IncrementalDB'],['itch','itch.io'],['apple','App Store'],['google','Google Play'],['official','Website'],['kongregate','Kongregate'],['newgrounds','Newgrounds'],['crazygames','CrazyGames'],['poki','Poki']]){
     const url=p.links?.[key];if(!url||!url.startsWith('https://'))continue;
     const a=el('a','',label);a.href=url;a.target='_blank';a.rel='noopener';$('modalLinks').append(a);
   }
